@@ -5,15 +5,20 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    password: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
         required: true
+    },
+    posts: [mongoose.ObjectId],
+    post_count: {
+        type: Number,
+        default: 0
+    },
+    friends: [mongoose.ObjectId],
+    friend_count: {
+        type: Number,
+        default: 0
     }
-
 })
 
 const User = model('User', userSchema);

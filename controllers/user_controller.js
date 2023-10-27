@@ -3,17 +3,17 @@ const User = require('../models/User');
 module.exports = {
     //Get all users
     async getAll(req, res) {
-        const posts = await Post.find();
+        const users = await User.find();
 
-        res.json(posts);
+        res.json(users);
     },
 
     //New account
-    async create(req, res) {
+    async signUp(req, res) {
         try {
-            const postData = req.body;
-            const newPost = await Post.create(postData)
-            res.json(newShop);
+            const userData = req.body;
+            const newUser = await User.create(userData)
+            res.json(newUser);
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: error.message });
@@ -21,7 +21,7 @@ module.exports = {
     },
     
     //Update profile
-    async edit(req, res) {
+    async update(req, res) {
         const post_id = req.params.post_id;
         const { title, post_content } = req.body;
 
