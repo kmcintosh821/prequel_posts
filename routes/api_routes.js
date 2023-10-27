@@ -2,47 +2,46 @@ const router = require('express').Router();
 const user_controller = require('../controllers/user_controller');
 const post_controller = require('../controllers/post_controller');
 
-//User Routes
-//Create User
-router.post('/users', user_controller.signUp);
+//Users
+// All-users routes
+router.route('/api/users')
+    .post(user_controller.signUp)
+    .get(user_controller.getAllUsers)
 
-//Read All Users
-router.get('/users', user_controller.getAllUsers)
+// Single-user routes
+router.route('/api/users/:user_id')
+    .get(user_controller.getProfile)
+    .put(user_controller.updateProfile)
+    .delete(user_controller.deleteAccount);
 
-//Find One User
-router.get('/users/:username', user_controller.getProfile)
+//Friend routes
+router.route('/api/users/:user_id/friends/:friend_id')
+    .post(user_controller.addFriends)
+    .delete(user_controller.removeFriends)
 
-//Update User Info
-router.put('/users/:username', user_controller.updateProfile);
+//Thoughts
+//All-thoughts routes
+router.route('/api/thoughts')
+    //Create Thought
+    .post(post_controller.createThought)
+    //Read All Thoughts
+    .get(post_controller.getAllThoughts);
 
-//Update User Friend Lists
-router.put('/friends/:username1/:username2', user_controller.updateFriends)
+//Singe-thought routes
+router.route('/api/thoughts/:thought_id')
+    //Read one hought
+    .get(post_controller.getThought)
+    //Update thought
+    .put(post_controller.editThought)
+    //Delete thought
+    .delete(post_controller.deleteThought);
 
-//Delete User Account
-router.delete('/users/:username', user_controller.deleteAccount);
 
-//Post Routes
-
-//Create Post
-router.post('/posts', post_controller.create);
-
-//Read All Posts
-router.get('/posts', post_controller.getAllPosts);
-
-//Read One Post
-router.get('/posts/:post_id', post_controller.getPost);
-
-//Edit Post
-router.put('/posts/:post_id', post_controller.edit);
-
-//React To Post
-router.put('/posts/:post_id/react', post_controller.react);
-
-//Delete Post
-router.delete('/posts/:post_id', post_controller.deletePost);
-
+//Reactions
+//React To Thought
+router.post('/api/thoughts/:thought_id/reactions', post_controller.react);
 //Delete Reaction
-router.delete('/posts/:post_id/:reaction_id', post_controller.unreact);
+router.delete('/api/thoughts/:thought_id/:reaction_id', post_controller.unreact);
 
 
 

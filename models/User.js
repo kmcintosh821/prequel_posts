@@ -3,22 +3,24 @@ const { model, Schema } = require('mongoose');
 const userSchema = new Schema({
     username: {
         type: String,
-        required: true
+        unique: true,
+        required: true,
+        trimmed: true
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
+        match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "That is not a valid email address."]
     },
-    posts: [String],
-    post_count: {
-        type: Number,
-        default: 0
-    },
-    friends: [String],
-    friend_count: {
-        type: Number,
-        default: 0
-    }
+    thoughts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Thought'
+    }],
+    friends: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 })
 
 const User = model('User', userSchema);

@@ -1,57 +1,83 @@
-const Post = require('../models/Post');
+const Thought = require('../models/Thought');
 
 module.exports = {
-    //Get all posts
-    async getAllPosts(req, res) {
-        const posts = await Post.find();
+    //Get all thoughts
+    async getAllThoughts(req, res) {
+        const thoughts = await Thought.find();
 
-        res.json(posts);
+        res.json(thoughts);
     },
 
-    //Get one post by id
-    async getPost(req, res) {
-        const post = await Post.find({_id: req.params.post_id});
+    //Get one thought by id
+    async getThought(req, res) {
+        const thought = await Thought.find({_id: req.params.thought_id});
 
-        res.json(post);
+        res.json(thought);
     },
 
-    //Create a new post
-    async create(req, res) {
+    //Create a new thought
+    async createThought(req, res) {
         try {
-            const postData = req.body;
-            const newPost = await Post.create(postData)
-            res.json(newShop);
+            const thoughtData = req.body;
+            const newThought = await Thought.create(thoughtData)
+            res.json(newThought);
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: error.message });
         }
     },
     
-    //Edit a post
-    async edit(req, res) {
-        const post_id = req.params.post_id;
-        const { title, post_content } = req.body;
+    //Edit a thought
+    async editThought(req, res) {
+        const thought_id = req.params.thought_id;
+        const { title, thought_text } = req.body;
 
-        const updated_post = await Post.findByIdAndUpdate(post_id, {
+        const updated_thought = await Thought.findByIdAndUpdate(thought_id, {
             $push: {
                 title: title,
-                post_content: post_content
+                thought_text: thought_text
             }
         }, { new: true });
 
-        res.json(updated_post);
+        res.json(updated_thought);
     },
 
-    //React to a post
+    async deleteThought(req, res) {
+        try {
+            const thought_id = req.params.thought_id;
+            await Thought.deleteOne({ _id: thought_id })
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    //React to a thought
     async react(req, res) {
-        //TODO
-    },
+        const thought_id = req.params.thought_id;
+        const { reaction } = req.body
 
-    async deletePost(req, res) {
-        //TODO
+        const change_reaction = await Post.findByIdAndUpdate(thought_id, {
+            $push: {
+                reactions: reaction
+                
+            }
+        })
     },
 
     async unreact(req, res) {
-        //TODO
+        try {
+            const thought_id = req.params.thought_id;
+    
+            await Post.findByIdAndUpdate(thought_id, {
+                $pull: {
+                    reactions: [{_id: req.params.reaction_id}]
+                    }
+                }
+            )
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message });
+        } 
     }
 }
