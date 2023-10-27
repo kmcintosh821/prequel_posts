@@ -2,10 +2,17 @@ const Post = require('../models/Post');
 
 module.exports = {
     //Get all posts
-    async getAll(req, res) {
+    async getAllPosts(req, res) {
         const posts = await Post.find();
 
         res.json(posts);
+    },
+
+    //Get one post by id
+    async getPost(req, res) {
+        const post = await Post.find({_id: req.params.post_id});
+
+        res.json(post);
     },
 
     //Create a new post
@@ -33,5 +40,18 @@ module.exports = {
         }, { new: true });
 
         res.json(updated_post);
+    },
+
+    //React to a post
+    async react(req, res) {
+        //TODO
+    },
+
+    async deletePost(req, res) {
+        //TODO
+    },
+
+    async unreact(req, res) {
+        //TODO
     }
 }

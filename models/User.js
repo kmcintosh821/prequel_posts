@@ -9,12 +9,12 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    posts: [mongoose.ObjectId],
+    posts: [String],
     post_count: {
         type: Number,
         default: 0
     },
-    friends: [mongoose.ObjectId],
+    friends: [String],
     friend_count: {
         type: Number,
         default: 0

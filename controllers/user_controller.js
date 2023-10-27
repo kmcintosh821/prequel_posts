@@ -2,8 +2,15 @@ const User = require('../models/User');
 
 module.exports = {
     //Get all users
-    async getAll(req, res) {
+    async getAllUsers(req, res) {
         const users = await User.find();
+
+        res.json(users);
+    },
+
+    //Get one user by username
+    async getProfile(req, res) {
+        const users = await User.find({username: req.params.username});
 
         res.json(users);
     },
@@ -21,17 +28,27 @@ module.exports = {
     },
     
     //Update profile
-    async update(req, res) {
-        const post_id = req.params.post_id;
-        const { title, post_content } = req.body;
+    async updateProfile(req, res) {
+        const user_id = req.params.user_id;
+        const { username, email } = req.body;
 
-        const updated_post = await Post.findByIdAndUpdate(post_id, {
+        const updatedProfile = await User.findByIdAndUpdate(user_id, {
             $push: {
-                title: title,
-                post_content: post_content
+                username: username,
+                email: email
             }
         }, { new: true });
 
-        res.json(updated_post);
+        res.json(updatedProfile);
+    },
+
+    //Update Friends
+    async updateFriends(req, res) {
+        //TODO
+    },
+
+    //Delete account
+    async deleteAccount(req, res) {
+        await User.deleteOne({ _id: req.params.user_id })
     }
 }

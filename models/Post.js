@@ -14,11 +14,17 @@ const postSchema = new Schema({
         required: true
     },
     reactions: [{
-        type: String
+        reactor: {
+            type: String,
+            required: true
+        },
+        reaction: {
+            type: String,
+            required: true
+        }
     }]
-
-})
+});
 
 const Post = model('Post', postSchema);
 
-module.exports = User;
+module.exports = Post;
