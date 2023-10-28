@@ -9,7 +9,7 @@ module.exports = {
         try {
             const userData = req.body;
             const newUser = await User.create(userData)
-            res.json(newUser);
+            res.status(200).json(newUser);
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: error.message });
@@ -20,7 +20,7 @@ module.exports = {
     async getAllUsers(req, res) {
         const users = await User.find();
 
-        res.json(users);
+        res.status(200).json(users);
     },
 
 
@@ -30,52 +30,94 @@ module.exports = {
 
     // GET
     async getProfile(req, res) {
-        const users = await User.findById(req.params.user_id);
-
-        res.json(users);
+        try {
+            const users = await User.findById(req.params.user_id);
+    
+            res.status(200).json(users);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message })
+        }
     },
     
     // PUT
     async updateProfile(req, res) {
-        const user_id = req.params.user_id;
-        const { username, email } = req.body;
-
-        const updatedProfile = await User.findByIdAndUpdate(user_id, {
-            $push: {
+        try {
+            const user_id = req.params.user_id;
+            const { username, email } = req.body;
+    
+            const profile = await User.findByIdAndUpdate(user_id, {
                 username: username,
                 email: email
-            }
-        }, { new: true });
+            });
 
-        res.json(updatedProfile);
+            profile.save()
+            updatedProfile = await User.findById(user_id)
+    
+            res.status(200).json(updatedProfile);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message })
+        }
     },
 
     // DELETE
     async deleteAccount(req, res) {
-        await User.deleteOne({ _id: req.params.user_id })
+        try {
+            const user = await User.findById(req.params.user_id)
+            await User.deleteOne({ _id: req.params.user_id })
+
+            res.status(200).json({ result: `${user.username} deleted!`});
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message })
+        }
     },
-
-    
-
-
 
     // '/users/:user_id/friends/:friend_id' routes
 
     // POST
     async addFriends(req, res) {
-        const firstUser = await User.findById(req.params.user_id)
-        const secondUser = await User.findById(req.params.friend_id)
-        
-        firstUser.friends.push({ _id: secondUser._id })
-        secondUser.friends.push({ _id: firstUser._id })
+        try {
+            
+            const firstUser = await User.findById(req.params.user_id)
+            const secondUser = await User.findById(req.params.friend_id)
+            
+            firstUser.friends.push({ _id: secondUser._id })
+            firstUser.__v = firstUser.friends.length
+            secondUser.friends.push({ _id: firstUser._id })
+            secondUser.__v = secondUser.friends.length
+
+            firstUser.save();
+            secondUser.save();
+
+            res.status(200).json({firstUser, secondUser});
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message })
+        }
     },
 
     // DELETE
     async removeFriends(req, res) {
-        const firstUser = await User.findById(req.params.user_id)
-        const secondUser = await User.findById(req.params.friend_id)
-        
-        firstUser.friends.pull({ _id: secondUser._id })
-        secondUser.friends.pull({ _id: firstUser._id })
+        try {
+            
+            const firstUser = await User.findById(req.params.user_id)
+            const secondUser = await User.findById(req.params.friend_id)
+            
+            firstUser.friends.pull({ _id: secondUser._id })
+            firstUser.__v = firstUser.friends.length
+            secondUser.friends.pull({ _id: firstUser._id })
+            secondUser.__v = secondUser.friends.length
+
+            firstUser.save();
+            secondUser.save();
+
+            res.status(200).json({firstUser, secondUser});
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message })
+        }
     }
 }
